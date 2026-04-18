@@ -3,7 +3,10 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import jakarta.persistence.DiscriminatorValue;
 import org.springframework.security.core.GrantedAuthority;
+import java.util.Collection;
+import java.util.List;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import jakarta.persistence.Column;
 
 @Entity
 @Table(name = "admins")
