@@ -15,12 +15,13 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "users")
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "user_type", discriminatorType = DiscriminatorType.STRING)
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public abstract class User implements UserDetails {
-
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,7 +30,7 @@ public abstract class User implements UserDetails {
     @Column(unique = true)
     private String email;
 
-    @Column(unique = true)
+    @Column(nullable = false)
     private String password;
 
     @Column(nullable = false)
@@ -59,7 +60,6 @@ public abstract class User implements UserDetails {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
-
     @Override
     public String getUsername() { return email; }
 
@@ -74,6 +74,4 @@ public abstract class User implements UserDetails {
 
     @Override
     public boolean isEnabled() { return active; }
-
-
 }

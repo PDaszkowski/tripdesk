@@ -1,16 +1,18 @@
 package com.example.tripdesk.model;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
-import jakarta.persistence.DiscriminatorValue;
+
+import jakarta.persistence.*;
+import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import java.util.Collection;
 import java.util.List;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import jakarta.persistence.Column;
 
 @Entity
-@Table(name = "admins")
 @DiscriminatorValue("ADMIN")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Admin extends User {
 
     @Column(nullable = false)
