@@ -29,7 +29,7 @@ public class SecurityConfig {
                     return config;
                 }))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/register", "/api/auth/**").permitAll() // Tu zezwalasz na rejestrację
+                        .requestMatchers("/api/register", "/api/login", "/api/auth/**").permitAll() // Dodano /api/login
                         .anyRequest().authenticated()
                 );
         return http.build();

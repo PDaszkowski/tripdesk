@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import axios from 'axios';
 
-function App() {
+// --- KOMPONENT REJESTRACJI ---
+function RegisterForm() {
     const [formData, setFormData] = useState({
         email: '', password: '', firstName: '', lastName: '', phoneNumber: '', role: 'CLIENT',
         agencyName: '', agencyNip: '', passportNumber: '', passportExpiry: ''
@@ -22,7 +23,7 @@ function App() {
     };
 
     return (
-        <div>
+        <div style={{ padding: '20px', border: '1px solid #eee' }}>
             <h2>Rejestracja</h2>
             <form onSubmit={handleSubmit}>
                 <input name="email" placeholder="Email" onChange={handleChange} /><br />
@@ -50,9 +51,53 @@ function App() {
                         <input name="passportExpiry" type="date" onChange={handleChange} /><br />
                     </>
                 )}
-
                 <button type="submit">Zarejestruj</button>
             </form>
+        </div>
+    );
+}
+
+// --- KOMPONENT LOGOWANIA ---
+function LoginForm() {
+    const [loginData, setLoginData] = useState({ email: '', password: '' });
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+    const handleLoginChange = (e: any) => {
+        setLoginData({ ...loginData, [e.target.name]: e.target.value });
+    };
+
+    const handleLoginSubmit = async (e: any) => {
+        e.preventDefault();
+        try {
+            const res = await axios.post('http://localhost:8080/api/login', loginData);
+            alert('Zalogowano! Witaj ' + res.data.firstName);
+            setIsLoggedIn(true);
+        } catch (err) {
+            alert('Błąd logowania: Nieprawidłowe dane');
+        }
+    };
+
+    return (
+        <div style={{ marginTop: '20px', padding: '20px', border: '1px solid #ccc' }}>
+            <h2>Logowanie</h2>
+            {isLoggedIn ? <p style={{color: 'green'}}>Status: Zalogowany pomyślnie!</p> : (
+                <form onSubmit={handleLoginSubmit}>
+                    <input name="email" placeholder="Email" onChange={handleLoginChange} /><br />
+                    <input name="password" type="password" placeholder="Hasło" onChange={handleLoginChange} /><br />
+                    <button type="submit">Zaloguj</button>
+                </form>
+            )}
+        </div>
+    );
+}
+
+// --- GŁÓWNY KOMPONENT APP ---
+function App() {
+    return (
+        <div style={{ maxWidth: '400px', margin: '0 auto' }}>
+            <h1>TripDesk System</h1>
+            <RegisterForm />
+            <LoginForm />
         </div>
     );
 }

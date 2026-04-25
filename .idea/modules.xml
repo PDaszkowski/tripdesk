@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/TripDesk.iml" filepath="$PROJECT_DIR$/TripDesk.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/tripdesk.iml" filepath="$PROJECT_DIR$/.idea/modules/tripdesk.iml" />
     </modules>
   </component>
 </project>
