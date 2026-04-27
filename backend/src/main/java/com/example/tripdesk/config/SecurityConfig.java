@@ -23,8 +23,13 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable()) // Wyłączamy CSRF dla testów API
                 .cors(cors -> cors.configurationSource(request -> {
                     CorsConfiguration config = new CorsConfiguration();
-                    config.setAllowedOrigins(List.of("http://localhost:3000"));
-                    config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE"));
+                    config.setAllowedOrigins(List.of(
+                            "http://localhost:3000",
+                            "http://localhost:5173"
+                    ));
+                    config.setAllowedMethods(List.of(
+                            "GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"
+                    ));
                     config.setAllowedHeaders(List.of("*"));
                     return config;
                 }))
