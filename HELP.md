@@ -1,50 +1,30 @@
-# Jak pracować na frontendzie
+# Getting Started
 
-## Rekomendowany zestaw (hot reload)
+### Reference Documentation
 
-Do codziennej pracy nad kodem React używasz **serwera deweloperskiego Vite** oraz **backendu z Dockera**.
+For further reference, please consider the following sections:
 
-1. **Backend i baza** — z katalogu głównego repozytorium uruchom:
+* [Official Gradle documentation](https://docs.gradle.org)
+* [Spring Boot Gradle Plugin Reference Guide](https://docs.spring.io/spring-boot/4.0.5/gradle-plugin)
+* [Create an OCI image](https://docs.spring.io/spring-boot/4.0.5/gradle-plugin/packaging-oci-image.html)
+* [Spring Data JPA](https://docs.spring.io/spring-boot/4.0.5/reference/data/sql.html#data.sql.jpa-and-spring-data)
+* [Spring Security](https://docs.spring.io/spring-boot/4.0.5/reference/web/spring-security.html)
+* [Spring Web](https://docs.spring.io/spring-boot/4.0.5/reference/web/servlet.html)
 
-   ```bash
-   docker compose up backend
-   ```
+### Guides
 
-   Serwis `backend` w `docker-compose.yml` ma `depends_on: db`, więc Docker podnosi też kontener **PostgreSQL**. Przy zmianach w Dockerfile backendu lub zależnościach dodaj przebudowę:
+The following guides illustrate how to use some features concretely:
 
-   ```bash
-   docker compose up --build backend
-   ```
+* [Accessing Data with JPA](https://spring.io/guides/gs/accessing-data-jpa/)
+* [Securing a Web Application](https://spring.io/guides/gs/securing-web/)
+* [Spring Boot and OAuth2](https://spring.io/guides/tutorials/spring-boot-oauth2/)
+* [Authenticating a User with LDAP](https://spring.io/guides/gs/authenticating-ldap/)
+* [Building a RESTful Web Service](https://spring.io/guides/gs/rest-service/)
+* [Serving Web Content with Spring MVC](https://spring.io/guides/gs/serving-web-content/)
+* [Building REST services with Spring](https://spring.io/guides/tutorials/rest/)
 
-   API Spring Boot jest dostępne pod **http://localhost:8080**.
+### Additional Links
 
-2. **Frontend** — w osobnym terminalu, w katalogu `frontend`:
+These additional references should also help you:
 
-   ```bash
-   cd frontend
-   npm install
-   npm run dev
-   ```
-
-   Domyślnie aplikacja działa pod **http://localhost:5173** (port Vite). Edycja plików odświeża widok bez przebudowy obrazu Dockera.
-
-3. **Adres API** — klient HTTP (`httpClient`) domyślnie wskazuje na `http://localhost:8080`. Inny adres możesz ustawić zmienną **`VITE_API_BASE_URL`** przy starcie lub w pliku `.env` w `frontend`.
-
-## Pełny stack w Dockerze (bez `npm run dev`)
-
-Jeśli chcesz uruchomić wszystko jak na „sztywnym” wdrożeniu:
-
-```bash
-docker compose up --build
-```
-
-Frontend z nginx jest wtedy pod **http://localhost:3000**. Po zmianach w kodzie frontendu trzeba **przebudować obraz** (`--build`), żeby zobaczyć efekt — do szybkiej iteracji nad UI wygodniejszy jest **`npm run dev`**.
-
-## Porty (skrót)
-
-| Usługa   | Port na hoście | Uwagi                          |
-|----------|----------------|--------------------------------|
-| Vite dev | 5173           | Praca nad frontendem           |
-| Frontend (Docker) | 3000 | Statyczny build z nginx |
-| Backend  | 8080           | REST API                       |
-| Postgres | 5433 → 5432    | Baza w kontenerze              |
+* [Gradle Build Scans – insights for your project's build](https://scans.gradle.com#gradle)
