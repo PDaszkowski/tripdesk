@@ -9,9 +9,13 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
+import java.util.List;
 
 @Entity
 @Table(name = "users")
@@ -74,4 +78,10 @@ public abstract class User implements UserDetails {
 
     @Override
     public boolean isEnabled() { return active; }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        // Zwracamy czystą nazwę roli (np. "CLIENT"),
+        return List.of(new SimpleGrantedAuthority(role.name()));
+    }
 }

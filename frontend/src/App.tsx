@@ -15,7 +15,7 @@ function RegisterForm() {
     const handleSubmit = async (e: any) => {
         e.preventDefault();
         try {
-            const res = await axios.post('http://localhost:8080/api/register', formData);
+            const res = await axios.post('http://localhost:8080/api/auth/register', formData);
             alert('Sukces: ' + res.data);
         } catch (err) {
             alert('Błąd rejestracji');
@@ -69,7 +69,7 @@ function LoginForm() {
     const handleLoginSubmit = async (e: any) => {
         e.preventDefault();
         try {
-            const res = await axios.post('http://localhost:8080/api/login', loginData);
+            const res = await axios.post('http://localhost:8080/api/auth/login', loginData);
             alert('Zalogowano! Witaj ' + res.data.firstName);
             setIsLoggedIn(true);
         } catch (err) {
