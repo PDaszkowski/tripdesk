@@ -3,7 +3,7 @@ import type { SubmitEvent } from 'react'
 import axios from 'axios'
 import { Link, useNavigate } from 'react-router-dom'
 import { registerUser } from '../api/authApi'
-import type { RegisterPayload, RegisterRole } from '../types'
+import type { RegisterPayload } from '../types'
 import {
   buildRegisterPayloadForApi,
   getRegisterFormValidationError,
@@ -70,8 +70,6 @@ export function RegisterForm() {
       setPending(false)
     }
   }
-
-  const role = form.role as RegisterRole
 
   return (
     <AuthCard
@@ -148,78 +146,28 @@ export function RegisterForm() {
           />
         </div>
 
-        <div className={styles.field}>
-          <label htmlFor="reg-role">Rola</label>
-          <select
-            id="reg-role"
-            required
-            value={form.role}
-            onChange={(ev) =>
-              handleChange('role', ev.target.value as RegisterRole)
-            }
-          >
-            <option value="CLIENT">Klient</option>
-            <option value="AGENT">Agent</option>
-            <option value="ADMIN">Administrator agencji</option>
-          </select>
+        <p className={styles.sectionLabel}>Dokumenty</p>
+        <div className={`${styles.row} ${styles.rowTwo}`}>
+          <div className={styles.field}>
+            <label htmlFor="reg-passport">Numer paszportu</label>
+            <input
+              id="reg-passport"
+              required
+              value={form.passportNumber}
+              onChange={(ev) => handleChange('passportNumber', ev.target.value)}
+            />
+          </div>
+          <div className={styles.field}>
+            <label htmlFor="reg-expiry">Ważność paszportu</label>
+            <input
+              id="reg-expiry"
+              type="date"
+              required
+              value={form.passportExpiry}
+              onChange={(ev) => handleChange('passportExpiry', ev.target.value)}
+            />
+          </div>
         </div>
-
-        {role === 'ADMIN' ? (
-          <>
-            <p className={styles.sectionLabel}>Agencja</p>
-            <div className={`${styles.row} ${styles.rowTwo}`}>
-              <div className={styles.field}>
-                <label htmlFor="reg-agency">Nazwa agencji</label>
-                <input
-                  id="reg-agency"
-                  required
-                  value={form.agencyName}
-                  onChange={(ev) => handleChange('agencyName', ev.target.value)}
-                />
-              </div>
-              <div className={styles.field}>
-                <label htmlFor="reg-nip">NIP</label>
-                <input
-                  id="reg-nip"
-                  required
-                  value={form.agencyNip}
-                  onChange={(ev) => handleChange('agencyNip', ev.target.value)}
-                />
-              </div>
-            </div>
-          </>
-        ) : null}
-
-        {role === 'CLIENT' ? (
-          <>
-            <p className={styles.sectionLabel}>Klient — dokument</p>
-            <div className={`${styles.row} ${styles.rowTwo}`}>
-              <div className={styles.field}>
-                <label htmlFor="reg-passport">Numer paszportu</label>
-                <input
-                  id="reg-passport"
-                  required
-                  value={form.passportNumber}
-                  onChange={(ev) =>
-                    handleChange('passportNumber', ev.target.value)
-                  }
-                />
-              </div>
-              <div className={styles.field}>
-                <label htmlFor="reg-expiry">Ważność paszportu</label>
-                <input
-                  id="reg-expiry"
-                  type="date"
-                  required
-                  value={form.passportExpiry}
-                  onChange={(ev) =>
-                    handleChange('passportExpiry', ev.target.value)
-                  }
-                />
-              </div>
-            </div>
-          </>
-        ) : null}
 
         <button className={styles.submit} type="submit" disabled={pending}>
           {pending ? 'Wysyłanie…' : 'Zarejestruj się'}
