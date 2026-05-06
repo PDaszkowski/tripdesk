@@ -1,75 +1,50 @@
-# React + TypeScript + Vite
+# Jak pracować na frontendzie
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Rekomendowany zestaw (hot reload)
 
-Currently, two official plugins are available:
+Do codziennej pracy nad kodem React używasz **serwera deweloperskiego Vite** oraz **backendu z Dockera**.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+1. **Backend i baza** — z katalogu głównego repozytorium uruchom:
 
-## React Compiler
+   ```bash
+   docker compose up backend
+   ```
 
-The React Compiler is enabled on this template. See [this documentation](https://react.dev/learn/react-compiler) for more information.
+   Serwis `backend` w `docker-compose.yml` ma `depends_on: db`, więc Docker podnosi też kontener **PostgreSQL**. Przy zmianach w Dockerfile backendu lub zależnościach dodaj przebudowę:
 
-Note: This will impact Vite dev & build performances.
+   ```bash
+   docker compose up --build backend
+   ```
 
-## Expanding the ESLint configuration
+   API Spring Boot jest dostępne pod **http://localhost:8080**.
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+2. **Frontend** — w osobnym terminalu, w katalogu `frontend`:
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+   ```bash
+   cd frontend
+   npm install
+   npm run dev
+   ```
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+   Domyślnie aplikacja działa pod **http://localhost:5173** (port Vite). Edycja plików odświeża widok bez przebudowy obrazu Dockera.
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+3. **Adres API** — klient HTTP (`httpClient`) domyślnie wskazuje na `http://localhost:8080`. Inny adres możesz ustawić zmienną **`VITE_API_BASE_URL`** przy starcie lub w pliku `.env` w `frontend`.
+
+## Pełny stack w Dockerze (bez `npm run dev`)
+
+Jeśli chcesz uruchomić wszystko jak na „sztywnym” wdrożeniu:
+
+```bash
+docker compose up --build
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+Frontend z nginx jest wtedy pod **http://localhost:3000**. Po zmianach w kodzie frontendu trzeba **przebudować obraz** (`--build`), żeby zobaczyć efekt — do szybkiej iteracji nad UI wygodniejszy jest **`npm run dev`**.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## Porty (skrót)
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+| Usługa   | Port na hoście | Uwagi                          |
+|----------|----------------|--------------------------------|
+| Vite dev | 5173           | Praca nad frontendem           |
+| Frontend (Docker) | 3000 | Statyczny build z nginx |
+| Backend  | 8080           | REST API                       |
+| Postgres | 5433 → 5432    | Baza w kontenerze              |
