@@ -13,13 +13,13 @@ function mapToAuthUser(data: Record<string, unknown>): AuthUser {
 }
 
 export async function registerUser(payload: RegisterPayload): Promise<string> {
-  const { data } = await httpClient.post<string>('/api/register', payload)
+  const { data } = await httpClient.post<string>('/api/auth/register', payload)
   return typeof data === 'string' ? data : String(data)
 }
 
 export async function loginUser(credentials: LoginCredentials): Promise<AuthUser> {
   const { data } = await httpClient.post<Record<string, unknown>>(
-    '/api/login',
+    '/api/auth/login',
     credentials,
   )
   return mapToAuthUser(data)

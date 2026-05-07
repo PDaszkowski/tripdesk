@@ -1,18 +1,32 @@
 package com.example.tripdesk.dtos;
 
-import lombok.Data;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
-@Data
-public class RegisterRequest {
-    private String email;
-    private String password;
-    private String firstName;
-    private String lastName;
-    private String phoneNumber;
-    private String role;
-    private String agencyName;
-    private String agencyNip;
 
-    private String passportNumber;
-    private String passportExpiry;
-}
+public record RegisterRequest(
+        @NotBlank(message = "Email is obligatory")
+        @Email(message = "Wrong email format")
+        String email,
+
+        @NotBlank(message = "Password is obligatory")
+        @Size(min = 8, message = "Password has to contain at least 8 symbols")
+        String password,
+
+        @NotBlank(message = "Name is obligatory")
+        String firstName,
+
+        @NotBlank(message = "Surname is obligatory")
+        String lastName,
+
+        String phoneNumber,
+        String role,
+
+
+        String agencyName,
+        String agencyNip,
+
+        String passportNumber,
+        String passportExpiry
+) {}
