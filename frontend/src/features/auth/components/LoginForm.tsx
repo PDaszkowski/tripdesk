@@ -2,9 +2,13 @@ import { useState } from 'react'
 import type { SubmitEvent } from 'react'
 import axios from 'axios'
 import { Link, useNavigate } from 'react-router-dom'
+import { HiOutlineEnvelope, HiOutlineLockClosed } from 'react-icons/hi2'
 import { useAuth } from '../context/useAuth'
 import { emailContainsAt } from '../validation'
 import { AuthCard } from './AuthCard'
+import { Input } from '@/shared/ui/Input'
+import { Checkbox } from '@/shared/ui/Checkbox'
+import { Button } from '@/shared/ui/Button'
 import styles from './LoginForm.module.css'
 
 export function LoginForm() {
@@ -12,6 +16,7 @@ export function LoginForm() {
   const { login } = useAuth()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [rememberMe, setRememberMe] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [pending, setPending] = useState(false)
 
@@ -54,33 +59,40 @@ export function LoginForm() {
     >
       <form className={styles.form} onSubmit={handleSubmit} noValidate>
         {error ? <div className={styles.error}>{error}</div> : null}
-        <div className={styles.field}>
-          <label htmlFor="login-email">Email</label>
-          <input
-            id="login-email"
-            name="email"
-            type="email"
-            autoComplete="email"
-            required
-            value={email}
-            onChange={(ev) => setEmail(ev.target.value)}
-          />
-        </div>
-        <div className={styles.field}>
-          <label htmlFor="login-password">Hasło</label>
-          <input
-            id="login-password"
-            name="password"
-            type="password"
-            autoComplete="current-password"
-            required
-            value={password}
-            onChange={(ev) => setPassword(ev.target.value)}
-          />
-        </div>
-        <button className={styles.submit} type="submit" disabled={pending}>
+        <Input
+          id="login-email"
+          label="Email"
+          name="email"
+          type="email"
+          autoComplete="email"
+          placeholder='twój@email.com'
+          required
+          icon={<HiOutlineEnvelope size={18} />}
+          value={email}
+          onChange={(ev) => setEmail(ev.target.value)}
+        />
+        <Input
+          id="login-password"
+          label="Hasło"
+          name="password"
+          type="password"
+          autoComplete="current-password"
+          placeholder='•••••••••'
+          required
+          icon={<HiOutlineLockClosed size={18} />}
+          value={password}
+          onChange={(ev) => setPassword(ev.target.value)}
+        />
+        <Checkbox
+          id="login-remember"
+          name="rememberMe"
+          label="Zapamiętaj mnie"
+          checked={rememberMe}
+          onChange={(ev) => setRememberMe(ev.target.checked)}
+        />
+        <Button variant="primary" fullWidth type="submit" disabled={pending}>
           {pending ? 'Logowanie…' : 'Zaloguj'}
-        </button>
+        </Button>
       </form>
     </AuthCard>
   )
