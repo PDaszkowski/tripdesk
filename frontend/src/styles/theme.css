@@ -45,4 +45,13 @@
   --color-teal-100: #ccfbf1; /* tło banera sukcesu                            */
   --color-teal-500: #14b8a6; /* secondary action, ikona ✓ "OK"                */
   --color-teal-600: #0d9488; /* hover dla teal-500                            */
+
+  /* ─────────────────────────────────────────────────────────────────────────
+   * RED - stany błędu, walidacja, akcje destrukcyjne ("Usuń konto").
+   * Wartości spójne z Tailwindowymi defaultami; trzymamy je w theme.css
+   * jako część kontraktu paletyki, żeby błąd wyglądał wszędzie tak samo.
+   * ───────────────────────────────────────────────────────────────────────── */
+  --color-red-100: #fee2e2; /* tło banera błędu (soft alert)                  */
+  --color-red-500: #ef4444; /* ramka inputa z błędem, ikony danger            */
+  --color-red-600: #dc2626; /* tekst komunikatu błędu, button "Usuń"          */
 }
