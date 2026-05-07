@@ -1,54 +1,35 @@
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-}
+/* ============================================================================
+ * TripDesk · Global styles
+ * ----------------------------------------------------------------------------
+ * Kolejność importów ma znaczenie:
+ *   1. tailwindcss   — preflight (reset) + warstwy base/components/utilities
+ *   2. ./theme.css   — @theme z paletą; nadpisuje/uzupełnia tokeny Tailwinda
+ *
+ * @layer base poniżej ustawia globalny "kostium" aplikacji: tło, kolor
+ * domyślnego tekstu, font, hierarchię nagłówków. Komponenty same już o tym
+ * nie myślą — dziedziczą.
+ * ========================================================================== */
 
-:root {
-  color-scheme: light;
-  --td-bg: #f4f6f8;
-  --td-surface: #ffffff;
-  --td-text: #1a1d21;
-  --td-muted: #5c6570;
-  --td-border: #dce1e6;
-  --td-primary: #2563eb;
-  --td-primary-hover: #1d4ed8;
-  --td-danger: #b91c1c;
-  --td-radius: 10px;
-  --td-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
-  font-family:
-    system-ui,
-    -apple-system,
-    'Segoe UI',
-    Roboto,
-    Ubuntu,
-    Cantarell,
-    sans-serif;
-  line-height: 1.45;
-}
+@import "tailwindcss";
+@import "./theme.css";
 
-body {
-  margin: 0;
-  min-height: 100vh;
-  background: var(--td-bg);
-  color: var(--td-text);
-}
+@layer base {
+  html {
+    background-color: var(--color-slate-50);
+    color: var(--color-slate-800);
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, Ubuntu, Cantarell,
+      sans-serif;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
 
-#root {
-  min-height: 100vh;
-}
+  body {
+    min-height: 100vh;
+  }
 
-a {
-  color: var(--td-primary);
-  font-weight: 500;
-  text-decoration: none;
-}
-
-a:hover {
-  text-decoration: underline;
-}
-
-button {
-  font: inherit;
-  cursor: pointer;
+  h1, h2, h3 {
+    color: var(--color-slate-900);
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
 }
