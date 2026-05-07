@@ -1,0 +1,38 @@
+.wrap {
+  width: 100%;
+  max-width: 440px;
+  margin: 0 auto;
+}
+
+.card {
+  background: var(--td-surface);
+  border-radius: var(--td-radius);
+  box-shadow: var(--td-shadow);
+  border: 1px solid var(--td-border);
+  padding: 2rem;
+}
+
+.title {
+  margin: 0 0 0.35rem;
+  font-size: 1.35rem;
+  font-weight: 650;
+}
+
+.subtitle {
+  margin: 0 0 1.25rem;
+  font-size: 0.95rem;
+  color: var(--td-muted);
+}
+
+.footer {
+  margin-top: 1.25rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--td-border);
+  font-size: 0.9rem;
+  color: var(--td-muted);
+  text-align: center;
+}
+
+.footer a {
+  margin-left: 0.25rem;
+}
