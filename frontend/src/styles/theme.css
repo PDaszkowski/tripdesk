@@ -1,0 +1,57 @@
+/* ============================================================================
+ * TripDesk · Design Tokens
+ * ----------------------------------------------------------------------------
+ * Centralna paleta kolorów projektu. Tailwind v4 czyta dyrektywę @theme i
+ * generuje z tych zmiennych:
+ *   • utility classes (bg-slate-50, text-sky-500, border-slate-200, ...)
+ *   • CSS custom properties dostępne wszędzie jako var(--color-slate-50)
+ *
+ * Reguła: to JEDYNE źródło prawdy o kolorach.
+ *   ✗  style={{ color: '#0EA5E9' }}                 - nie
+ *   ✗  background: #F1F5F9                          - nie
+ *   ✓  className="bg-sky-500 hover:bg-sky-600"      - tak
+ *   ✓  background: var(--color-slate-100)           - tak (gdy musi być CSS)
+ *
+ * Rebrand albo dodanie dark mode = edycja jednego pliku.
+ * Komentarz przy każdym tokenie wskazuje typowy use case (gdzie się go używa
+ * w projekcie), nie ogranicznik - można odstąpić jeśli ma to sens.
+ * ========================================================================== */
+
+@theme {
+  /* ─────────────────────────────────────────────────────────────────────────
+   * SLATE - szarości, baza i struktura interfejsu.
+   * Z tych kolorów NIE robimy przycisków akcji (od tego są sky/teal).
+   * Skala od najjaśniejszego (tła) do najciemniejszego (nagłówki).
+   * ───────────────────────────────────────────────────────────────────────── */
+  --color-slate-50:  #f8fafc; /* tło aplikacji (canvas)                       */
+  --color-slate-100: #f1f5f9; /* tła kart, sidebar, header tabeli             */
+  --color-slate-200: #e2e8f0; /* obramowania inputów, separatory, borders     */
+  --color-slate-500: #64748b; /* tekst drugorzędny, placeholdery, ikony off   */
+  --color-slate-800: #1e293b; /* tekst body — domyślny kolor tekstu           */
+  --color-slate-900: #0f172a; /* nagłówki H1/H2, ważne liczby (np. kwoty)     */
+
+  /* ─────────────────────────────────────────────────────────────────────────
+   * SKY - primary brand. Akcje główne i akcent informacyjny.
+   * Używamy oszczędnie, ale strategicznie - sygnalizuje "można kliknąć".
+   * ───────────────────────────────────────────────────────────────────────── */
+  --color-sky-100: #e0f2fe; /* tło aktywnej zakładki / zaznaczonego wiersza   */
+  --color-sky-500: #0ea5e9; /* primary action: button "Zaloguj", link, active */
+  --color-sky-600: #0284c7; /* hover dla sky-500                              */
+
+  /* ─────────────────────────────────────────────────────────────────────────
+   * TEAL - secondary brand + wskaźnik sukcesu.
+   * Akcje alternatywne ("Pobierz raport") i potwierdzenia ("Konto utworzone").
+   * ───────────────────────────────────────────────────────────────────────── */
+  --color-teal-100: #ccfbf1; /* tło banera sukcesu                            */
+  --color-teal-500: #14b8a6; /* secondary action, ikona ✓ "OK"                */
+  --color-teal-600: #0d9488; /* hover dla teal-500                            */
+
+  /* ─────────────────────────────────────────────────────────────────────────
+   * RED - stany błędu, walidacja, akcje destrukcyjne ("Usuń konto").
+   * Wartości spójne z Tailwindowymi defaultami; trzymamy je w theme.css
+   * jako część kontraktu paletyki, żeby błąd wyglądał wszędzie tak samo.
+   * ───────────────────────────────────────────────────────────────────────── */
+  --color-red-100: #fee2e2; /* tło banera błędu (soft alert)                  */
+  --color-red-500: #ef4444; /* ramka inputa z błędem, ikony danger            */
+  --color-red-600: #dc2626; /* tekst komunikatu błędu, button "Usuń"          */
+}

@@ -1,0 +1,35 @@
+/* ============================================================================
+ * TripDesk · Global styles
+ * ----------------------------------------------------------------------------
+ * Kolejność importów ma znaczenie:
+ *   1. tailwindcss   — preflight (reset) + warstwy base/components/utilities
+ *   2. ./theme.css   — @theme z paletą; nadpisuje/uzupełnia tokeny Tailwinda
+ *
+ * @layer base poniżej ustawia globalny "kostium" aplikacji: tło, kolor
+ * domyślnego tekstu, font, hierarchię nagłówków. Komponenty same już o tym
+ * nie myślą — dziedziczą.
+ * ========================================================================== */
+
+@import "tailwindcss";
+@import "./theme.css";
+
+@layer base {
+  html {
+    background-color: var(--color-slate-50);
+    color: var(--color-slate-800);
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, Ubuntu, Cantarell,
+      sans-serif;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body {
+    min-height: 100vh;
+  }
+
+  h1, h2, h3 {
+    color: var(--color-slate-900);
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+}

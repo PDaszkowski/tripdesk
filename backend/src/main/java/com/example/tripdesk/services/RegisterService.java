@@ -21,11 +21,11 @@ public class RegisterService {
     public User registerUser(RegisterRequest request) {
         User user;
 
-        switch (request.getRole().toUpperCase()) {
+        switch (request.role().toUpperCase()) {
             case "ADMIN" -> {
                 Admin admin = new Admin();
-                admin.setAgencyName(request.getAgencyName());
-                admin.setAgencyNip(request.getAgencyNip());
+                admin.setAgencyName(request.agencyName());
+                admin.setAgencyNip(request.agencyNip());
                 user = admin;
             }
             case "AGENT" -> {
@@ -33,23 +33,23 @@ public class RegisterService {
             }
             case "CLIENT" -> {
                 Client client = new Client();
-                client.setPassportNumber(request.getPassportNumber());
-                if (request.getPassportExpiry() != null && !request.getPassportExpiry().isEmpty()) {
-                    client.setPassportExpiry(LocalDate.parse(request.getPassportExpiry()));
+                client.setPassportNumber(request.passportNumber());
+                if (request.passportExpiry() != null && !request.passportExpiry().isEmpty()) {
+                    client.setPassportExpiry(LocalDate.parse(request.passportExpiry()));
                 }
                 user = client;
             }
-            default -> throw new IllegalArgumentException("Nieznana rola: " + request.getRole());
+            default -> throw new IllegalArgumentException("Unknown role: " + request.role());
         }
 
-        user.setEmail(request.getEmail());
-        user.setFirstName(request.getFirstName());
-        user.setLastName(request.getLastName());
-        user.setPhoneNumber(request.getPhoneNumber());
-        user.setRole(com.example.tripdesk.enums.UserRole.valueOf(request.getRole().toUpperCase()));
+        user.setEmail(request.email());
+        user.setFirstName(request.firstName());
+        user.setLastName(request.lastName());
+        user.setPhoneNumber(request.phoneNumber());
+        user.setRole(com.example.tripdesk.enums.UserRole.valueOf(request.role().toUpperCase()));
         user.setActive(true);
 
-        user.setPassword(passwordEncoder.encode(request.getPassword()));
+        user.setPassword(passwordEncoder.encode(request.password()));
 
         return userRepository.save(user);
     }
