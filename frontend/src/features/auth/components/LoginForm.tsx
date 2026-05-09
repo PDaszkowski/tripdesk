@@ -2,14 +2,14 @@ import { useState } from 'react'
 import type { SubmitEvent } from 'react'
 import axios from 'axios'
 import { Link, useNavigate } from 'react-router-dom'
-import { HiOutlineEnvelope, HiOutlineLockClosed } from 'react-icons/hi2'
+import { HiOutlineEnvelope } from 'react-icons/hi2'
 import { useAuth } from '../context/useAuth'
 import { emailContainsAt } from '../validation'
 import { AuthCard } from './AuthCard'
 import { Input } from '@/shared/ui/Input'
+import { PasswordInput } from '@/shared/ui/PasswordInput'
 import { Checkbox } from '@/shared/ui/Checkbox'
 import { Button } from '@/shared/ui/Button'
-import styles from './LoginForm.module.css'
 
 export function LoginForm() {
   const navigate = useNavigate()
@@ -52,13 +52,22 @@ export function LoginForm() {
       subtitle="Zaloguj się na swoje konto TripDesk."
       footer={
         <>
-          Nie masz konta?
-          <Link to="/register">Zarejestruj się</Link>
+          Nie masz konta?{' '}
+          <Link
+            to="/register"
+            className="text-sky-500 transition-colors hover:text-sky-600"
+          >
+            Zarejestruj się
+          </Link>
         </>
       }
     >
-      <form className={styles.form} onSubmit={handleSubmit} noValidate>
-        {error ? <div className={styles.error}>{error}</div> : null}
+      <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-4">
+        {error ? (
+          <div className="rounded-lg border border-red-500 bg-red-100 px-4 py-3 text-sm text-red-600">
+            {error}
+          </div>
+        ) : null}
         <Input
           id="login-email"
           label="Email"
@@ -71,15 +80,13 @@ export function LoginForm() {
           value={email}
           onChange={(ev) => setEmail(ev.target.value)}
         />
-        <Input
+        <PasswordInput
           id="login-password"
           label="Hasło"
           name="password"
-          type="password"
           autoComplete="current-password"
           placeholder='•••••••••'
           required
-          icon={<HiOutlineLockClosed size={18} />}
           value={password}
           onChange={(ev) => setPassword(ev.target.value)}
         />

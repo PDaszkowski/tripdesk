@@ -1,6 +1,5 @@
 import { useLocation } from 'react-router-dom'
 import { LoginForm } from '../components/LoginForm'
-import styles from './LoginPage.module.css'
 
 interface LoginLocationState {
   registeredEmail?: string
@@ -12,13 +11,17 @@ export function LoginPage() {
   const showFlash = Boolean(state?.registeredEmail)
 
   return (
-    <div className={styles.shell}>
+    <>
       {showFlash ? (
-        <div className={styles.flash} role="status">
-          Rejestracja zakończona pomyślnie. Możesz zalogować się na podany adres email.
+        <div
+          role="status"
+          className="mx-auto mb-5 w-full max-w-md rounded-lg border border-teal-500 bg-teal-100 px-4 py-3 text-sm text-teal-700"
+        >
+          Rejestracja zakończona pomyślnie. Możesz zalogować się na podany adres
+          email.
         </div>
       ) : null}
       <LoginForm />
-    </div>
+    </>
   )
 }
