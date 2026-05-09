@@ -27,14 +27,14 @@ export function Checkbox({
         className,
       )}
     >
-      <span className="relative flex h-4 w-4 items-center justify-center">
+      <span className="relative flex h-5 w-5 items-center justify-center">
         <input
           ref={ref}
           id={inputId}
           type="checkbox"
           disabled={disabled}
           className={cn(
-            'peer h-4 w-4 appearance-none rounded border border-slate-200 bg-white transition-colors',
+            'peer h-5 w-5 appearance-none rounded border border-slate-200 bg-white transition-colors',
             'checked:border-sky-500 checked:bg-sky-500',
             'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-500/30',
             'disabled:cursor-not-allowed',
@@ -42,10 +42,10 @@ export function Checkbox({
           )}
           {...rest}
         />
-        <HiCheck className="pointer-events-none absolute h-3 w-3 text-white opacity-0 peer-checked:opacity-100" />
+        <HiCheck className="pointer-events-none absolute h-3.5 w-3.5 text-white opacity-0 peer-checked:opacity-100" />
       </span>
 
-      {label && <span className="text-sm text-slate-800">{label}</span>}
+      {label && <span className="text-sm text-slate-500">{label}</span>}
     </label>
   );
 }
