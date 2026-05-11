@@ -1,6 +1,5 @@
 import { useState } from 'react'
 import type { SubmitEvent } from 'react'
-import axios from 'axios'
 import { Link, useNavigate } from 'react-router-dom'
 import {
   HiOutlineEnvelope,
@@ -12,7 +11,8 @@ import {
   HiOutlineChevronRight,
   HiOutlineChevronLeft,
 } from 'react-icons/hi2'
-import { registerUser } from '../api/authApi'
+import { HTTPError } from '@/shared/api/httpClient'
+import { useRegisterMutation } from '../api/register'
 import type { RegisterPayload } from '../types'
 import { buildRegisterPayloadForApi } from '../validation'
 import { Input } from '@/shared/ui/Input'
@@ -35,13 +35,27 @@ const emptyPayload: RegisterPayload = {
   passportExpiry: '',
 }
 
+async function formatError(err: unknown): Promise<string> {
+  if (err instanceof HTTPError) {
+    try {
+      const text = await err.response.clone().text()
+      if (text && !text.startsWith('<')) return text
+    } catch {
+      // ignore
+    }
+    if (err.response.status === 400) return 'Sprawdź poprawność danych.'
+    return `Błąd serwera (${err.response.status}).`
+  }
+  return 'Rejestracja nie powiodła się.'
+}
+
 export function RegisterForm() {
   const navigate = useNavigate()
+  const registerMutation = useRegisterMutation()
   const [step, setStep] = useState<Step>(1)
   const [form, setForm] = useState<RegisterPayload>(emptyPayload)
   const [confirmPassword, setConfirmPassword] = useState('')
   const [error, setError] = useState<string | null>(null)
-  const [pending, setPending] = useState(false)
 
   function handleChange<K extends keyof RegisterPayload>(
     key: K,
@@ -72,12 +86,14 @@ export function RegisterForm() {
 
   function goBack() {
     setError(null)
+    registerMutation.reset()
     setStep(1)
   }
 
   async function handleSubmit(e: SubmitEvent<HTMLFormElement>) {
     e.preventDefault()
     setError(null)
+    registerMutation.reset()
 
     if (step === 1) {
       const err = validateStep1()
@@ -102,27 +118,18 @@ export function RegisterForm() {
     }
 
     const payload = buildRegisterPayloadForApi(form)
-    const emailTrim = payload.email
 
-    setPending(true)
-    try {
-      await registerUser(payload)
-      navigate('/login', {
-        replace: false,
-        state: { registeredEmail: emailTrim },
-      })
-    } catch (err) {
-      const msg = axios.isAxiosError(err)
-        ? typeof err.response?.data === 'string'
-          ? err.response.data
-          : err.response?.status === 400
-            ? 'Sprawdź poprawność danych.'
-            : 'Rejestracja nie powiodła się.'
-        : 'Rejestracja nie powiodła się.'
-      setError(msg)
-    } finally {
-      setPending(false)
-    }
+    registerMutation.mutate(payload, {
+      onSuccess: () => {
+        navigate('/login', {
+          replace: false,
+          state: { registeredEmail: payload.email },
+        })
+      },
+      onError: async (err) => {
+        setError(await formatError(err))
+      },
+    })
   }
 
   return (
@@ -264,6 +271,7 @@ export function RegisterForm() {
                 type="button"
                 onClick={goBack}
                 className="flex-1"
+                disabled={registerMutation.isPending}
               >
                 <HiOutlineChevronLeft size={18} />
                 Wróć
@@ -271,10 +279,10 @@ export function RegisterForm() {
               <Button
                 variant="secondary"
                 type="submit"
-                disabled={pending}
+                disabled={registerMutation.isPending}
                 className="flex-1"
               >
-                {pending ? 'Wysyłanie…' : 'Zarejestruj się'}
+                {registerMutation.isPending ? 'Wysyłanie…' : 'Zarejestruj się'}
               </Button>
             </div>
           </>

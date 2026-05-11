@@ -1,4 +1,3 @@
-/** Role values accepted by POST /api/register */
 export type RegisterRole = 'CLIENT' | 'AGENT' | 'ADMIN'
 
 export interface RegisterPayload {
@@ -19,20 +18,24 @@ export interface LoginCredentials {
   password: string
 }
 
-/** Safe user snapshot for UI (no password). */
-export interface AuthUser {
-  id: number
+export interface AuthResponse {
+  accessToken: string
+  refreshToken: string
   email: string
   firstName: string
   lastName: string
-  phoneNumber: string
+  role: RegisterRole
+}
+
+export interface AuthUser {
+  email: string
+  firstName: string
+  lastName: string
   role: RegisterRole
 }
 
 export interface AuthContextValue {
   user: AuthUser | null
   isAuthenticated: boolean
-  login: (credentials: LoginCredentials) => Promise<void>
-  logout: () => void
   setSessionUser: (user: AuthUser | null) => void
 }
