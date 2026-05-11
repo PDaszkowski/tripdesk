@@ -46,7 +46,7 @@ export function LoginForm() {
     loginMutation.mutate(
       { email: emailTrim, password },
       {
-        onSuccess: () => navigate('/'),
+        onSuccess: () => navigate('/dashboard'),
       },
     )
   }
@@ -60,7 +60,7 @@ export function LoginForm() {
           Nie masz konta?{' '}
           <Link
             to="/register"
-            className="font-medium text-sky-500 transition-colors hover:text-sky-600"
+            className="text-sky-500 transition-colors hover:text-sky-600"
           >
             Zarejestruj się
           </Link>
