@@ -1,18 +1,16 @@
-import { useCallback, useMemo, useState, type ReactNode } from 'react'
-import type { AuthUser, AuthContextValue, LoginCredentials } from '../types'
-import { loginUser } from '../api/authApi'
+import { useCallback, useEffect, useMemo, useState, type ReactNode } from 'react'
+import type { AuthContextValue, AuthUser } from '../types'
+import { tokenStorage } from '@/shared/api/tokenStorage'
 import { AuthContext } from './auth-context'
 
-const STORAGE_KEY = 'tripdesk_auth_user'
+const USER_KEY = 'tripdesk_auth_user'
 
 function readStoredUser(): AuthUser | null {
   try {
-    const raw = sessionStorage.getItem(STORAGE_KEY)
+    const raw = localStorage.getItem(USER_KEY)
     if (!raw) return null
     const parsed = JSON.parse(raw) as AuthUser
-    if (typeof parsed?.id !== 'number' || typeof parsed.email !== 'string') {
-      return null
-    }
+    if (typeof parsed?.email !== 'string') return null
     return parsed
   } catch {
     return null
@@ -20,42 +18,45 @@ function readStoredUser(): AuthUser | null {
 }
 
 function persistUser(user: AuthUser | null) {
-  if (user) {
-    sessionStorage.setItem(STORAGE_KEY, JSON.stringify(user))
-  } else {
-    sessionStorage.removeItem(STORAGE_KEY)
+  try {
+    if (user) {
+      localStorage.setItem(USER_KEY, JSON.stringify(user))
+    } else {
+      localStorage.removeItem(USER_KEY)
+    }
+  } catch {
+    // ignore
   }
 }
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<AuthUser | null>(() => readStoredUser())
+  const [user, setUser] = useState<AuthUser | null>(() => {
+    if (!tokenStorage.getAccessToken()) return null
+    return readStoredUser()
+  })
 
   const setSessionUser = useCallback((next: AuthUser | null) => {
     setUser(next)
     persistUser(next)
   }, [])
 
-  const login = useCallback(
-    async (credentials: LoginCredentials) => {
-      const nextUser = await loginUser(credentials)
-      setSessionUser(nextUser)
-    },
-    [setSessionUser],
-  )
-
-  const logout = useCallback(() => {
-    setSessionUser(null)
-  }, [setSessionUser])
+  useEffect(() => {
+    function onStorage(e: StorageEvent) {
+      if (e.key === USER_KEY && e.newValue === null) {
+        setUser(null)
+      }
+    }
+    window.addEventListener('storage', onStorage)
+    return () => window.removeEventListener('storage', onStorage)
+  }, [])
 
   const value = useMemo<AuthContextValue>(
     () => ({
       user,
       isAuthenticated: user !== null,
-      login,
-      logout,
       setSessionUser,
     }),
-    [user, login, logout, setSessionUser],
+    [user, setSessionUser],
   )
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
