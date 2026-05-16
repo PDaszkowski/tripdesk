@@ -5,6 +5,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Service
 public class UnsplashService {
 
@@ -36,4 +39,33 @@ public class UnsplashService {
         }
         return "https://images.unsplash.com/photo-1436491865332-7a61a109cc05";
     }
+
+    public List<String> getAttractionPhotos(String attractionsText) {
+        if (attractionsText == null || attractionsText.isEmpty()) return List.of();
+
+        String[] attractionList = attractionsText.split(",");
+        List<String> urls = new ArrayList<>();
+
+        for (String attr : attractionList) {
+            try {
+                UnsplashResponse response = restClient.get()
+                        .uri(uriBuilder -> uriBuilder
+                                .path("/search/photos")
+                                .queryParam("query", attr.trim())
+                                .queryParam("per_page", 1)
+                                .build())
+                        .header("Authorization", "Client-ID " + accessKey)
+                        .retrieve()
+                        .body(UnsplashResponse.class);
+
+                if (response != null && !response.results().isEmpty()) {
+                    urls.add(response.results().get(0).urls().regular());
+                }
+            } catch (Exception e) {
+                System.err.println("Błąd pobierania zdjęcia dla " + attr + ": " + e.getMessage());
+            }
+        }
+        return urls;
+    }
+
 }

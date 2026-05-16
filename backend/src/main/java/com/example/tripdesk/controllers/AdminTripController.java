@@ -18,9 +18,10 @@ public class AdminTripController {
     public ResponseEntity<String> syncTrip(
             @RequestParam(defaultValue = "WAW") String origin,
             @RequestParam(defaultValue = "CDG") String destination,
-            @RequestParam String departureDate // format: YYYY-MM-DD
+            @RequestParam String departureDate, // format: YYYY-MM-DD
+            @RequestParam String returnDate
     ) {
-        tripSyncService.generateTripOffer(origin, destination, departureDate);
+        tripSyncService.generateTripOffer(origin, destination, departureDate, returnDate);
         return ResponseEntity.ok("Zrobione! Oferta połączyła się z obu API i zapisała w bazie.");
     }
 }

@@ -1,8 +1,13 @@
 package com.example.tripdesk.dtos;
 
+import java.util.List;
+
 public record TripDetails(
         String hotelName,
         String description,
-        String attractions,
-        Integer maxPersons
+        List<String> attractions,
+        Integer maxPeople,
+        String boardBasis,
+        Boolean hasParking,
+        String country
 ) {}

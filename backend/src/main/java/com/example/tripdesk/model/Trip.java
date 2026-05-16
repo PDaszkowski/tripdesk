@@ -2,8 +2,12 @@ package com.example.tripdesk.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "trips")
@@ -39,5 +43,22 @@ public class Trip {
     @Column(columnDefinition = "TEXT")
     private String attractions;
 
-    private Integer maxPersons;
+    private Integer maxPeople;
+
+    private LocalDateTime returnDepartureTime;
+    private Integer durationDays;
+    private String boardBasis;
+    private Boolean hasParking;
+    private BigDecimal flightPrice;
+    private BigDecimal hotelPrice;
+
+    @ElementCollection
+    @CollectionTable(name = "trip_attraction_images", joinColumns = @JoinColumn(name = "trip_id"))
+    @Column(name = "image_url")
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private List<String> attractionImageUrls;
+
+    public String country;
+
+    private String stopOverInfo;
 }

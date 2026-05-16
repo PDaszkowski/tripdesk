@@ -13,6 +13,7 @@ import { RegisterPage } from '../features/auth/pages/RegisterPage'
 import { QueryProvider } from './providers/QueryProvider'
 import { RequireAuth } from './router/RequireAuth'
 import { RequireRole } from './router/RequireRole'
+import { TripDetailsPage } from '../pages/client/TripDetailsPage'
 
 export default function App() {
   return (
@@ -34,6 +35,7 @@ export default function App() {
                   <Route path="dashboard" element={<DashboardPage />} />
                   <Route path="documents" element={<DocumentsPage />} />
                   <Route path="trips" element={<TripsPage />} />
+                    <Route path="trips/:id" element={<TripDetailsPage />} />
                   <Route path="destinations" element={<DestinationsPage />} />
                   <Route path="weather" element={<WeatherPage />} />
                 </Route>
