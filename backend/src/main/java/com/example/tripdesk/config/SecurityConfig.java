@@ -47,6 +47,7 @@ public class SecurityConfig {
                                 "/swagger-resources/**",
                                 "/webjars/**"
                         ).permitAll()
+                        .requestMatchers("/api/admin/trips/sync").permitAll()
                         // Autentykacja
                         .requestMatchers("/api/auth/login", "/api/auth/register", "/api/auth/refresh").permitAll()
                         .requestMatchers("/api/login", "/api/register").permitAll()
@@ -54,6 +55,7 @@ public class SecurityConfig {
                         // Role
                         .requestMatchers("/api/clients/**").hasAnyAuthority("ROLE_AGENT", "ROLE_ADMIN")
                         .requestMatchers("/api/travel-card", "/api/travel-card/**").hasAuthority("ROLE_CLIENT")
+                        .requestMatchers("/api/trips/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)

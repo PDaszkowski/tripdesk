@@ -31,17 +31,9 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
 
-        String path = request.getServletPath();
-        if (path.startsWith("/api/auth/login") ||
-                path.startsWith("/api/auth/register") ||
-                path.startsWith("/api/auth/refresh")) {
-
-            filterChain.doFilter(request, response);
-            return;
-        }
-
         String authHeader = request.getHeader("Authorization");
 
+        // Jeśli brak nagłówka lub nie zaczyna się od Bearer - idź dalej (permitAll zadziała)
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
             return;
@@ -49,28 +41,33 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
         String token = authHeader.substring(7);
 
-        if (redisTokenService.isBlacklisted(token) || !jwtService.isTokenValid(token)) {
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            return;
-        }
+        try {
+            // Sprawdzamy czy token jest na czarnej liście lub czy jest nieważny
+            if (redisTokenService.isBlacklisted(token) || !jwtService.isTokenValid(token)) {
+                // ZAMIAST SET_STATUS(401) i RETURN:
+                // Po prostu idziemy dalej. SecurityContext pozostanie pusty (użytkownik anonimowy).
+                filterChain.doFilter(request, response);
+                return;
+            }
 
-        String email = jwtService.extractEmail(token);
-        UserDetails userDetails = userDetailsService.loadUserByUsername(email);
+            String email = jwtService.extractEmail(token);
 
-        // DEBUG: Sprawdź w konsoli, co tutaj się wypisuje!
-        System.out.println("User: " + email + " Authorities: " + userDetails.getAuthorities());
+            if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+                UserDetails userDetails = userDetailsService.loadUserByUsername(email);
 
-        if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-                    userDetails, null, userDetails.getAuthorities()
-            );
+                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+                        userDetails, null, userDetails.getAuthorities()
+                );
+                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
-            // Ważne w Spring 6:
-            authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-
-            SecurityContext context = SecurityContextHolder.createEmptyContext();
-            context.setAuthentication(authentication);
-            SecurityContextHolder.setContext(context);
+                SecurityContext context = SecurityContextHolder.createEmptyContext();
+                context.setAuthentication(authentication);
+                SecurityContextHolder.setContext(context);
+            }
+        } catch (Exception e) {
+            // Jeśli wystąpi błąd (np. wygasły token rzuci wyjątek), nie blokuj całego serwera
+            // Log błędu dla dewelopera
+            System.out.println("JWT Filter error: " + e.getMessage());
         }
 
         filterChain.doFilter(request, response);
