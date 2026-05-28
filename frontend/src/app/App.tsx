@@ -14,6 +14,7 @@ import { QueryProvider } from './providers/QueryProvider'
 import { RequireAuth } from './router/RequireAuth'
 import { RequireRole } from './router/RequireRole'
 import { TripDetailsPage } from '../pages/client/TripDetailsPage'
+import { BookTripPage } from '../pages/client/BookTripPage'
 
 export default function App() {
   return (
@@ -36,6 +37,7 @@ export default function App() {
                   <Route path="documents" element={<DocumentsPage />} />
                   <Route path="trips" element={<TripsPage />} />
                     <Route path="trips/:id" element={<TripDetailsPage />} />
+                    <Route path="book/:id" element={<BookTripPage />} />
                   <Route path="destinations" element={<DestinationsPage />} />
                   <Route path="weather" element={<WeatherPage />} />
                 </Route>
