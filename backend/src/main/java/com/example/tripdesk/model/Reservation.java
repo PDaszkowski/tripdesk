@@ -20,6 +20,10 @@ public class Reservation {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "trip_id", nullable = false)
     private Trip trip;
 
@@ -40,6 +44,7 @@ public class Reservation {
     private List<String> participants;
 
     private LocalDateTime createdAt;
+
 
     @PrePersist
     protected void onCreate() {

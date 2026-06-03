@@ -51,11 +51,13 @@ public class SecurityConfig {
                         // Autentykacja
                         .requestMatchers("/api/auth/login", "/api/auth/register", "/api/auth/refresh").permitAll()
                         .requestMatchers("/api/login", "/api/register").permitAll()
+                        .requestMatchers("/api/webhook").permitAll()
                         .requestMatchers("/api/auth/logout").authenticated()
                         // Role
                         .requestMatchers("/api/clients/**").hasAnyAuthority("ROLE_AGENT", "ROLE_ADMIN")
                         .requestMatchers("/api/travel-card", "/api/travel-card/**").hasAuthority("ROLE_CLIENT")
                         .requestMatchers("/api/trips/**").permitAll()
+                        .requestMatchers("/api/reservations", "/api/reservations/**").authenticated()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
