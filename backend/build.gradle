@@ -58,6 +58,12 @@ dependencies {
     // JSON
     implementation 'com.fasterxml.jackson.core:jackson-databind'
 
+    // STRIPE
+    implementation 'com.stripe:stripe-java:24.0.0'
+
+    // GSON
+    implementation 'com.google.code.gson:gson:2.10.1'
+
     // TESTY
     testImplementation platform('org.testcontainers:testcontainers-bom:1.19.7')
     testImplementation 'org.testcontainers:junit-jupiter'
