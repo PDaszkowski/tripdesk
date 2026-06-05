@@ -15,6 +15,7 @@ import { RequireAuth } from './router/RequireAuth'
 import { RequireRole } from './router/RequireRole'
 import { TripDetailsPage } from '../pages/client/TripDetailsPage'
 import { BookTripPage } from '../pages/client/BookTripPage'
+import { MyTripsPage } from '../pages/client/MyTripsPage';
 
 export default function App() {
   return (
@@ -34,6 +35,7 @@ export default function App() {
               <Route element={<RequireRole role="CLIENT" />}>
                 <Route element={<ClientLayout />}>
                   <Route path="dashboard" element={<DashboardPage />} />
+                    <Route path="/my-trips" element={<MyTripsPage />} />
                   <Route path="documents" element={<DocumentsPage />} />
                   <Route path="trips" element={<TripsPage />} />
                     <Route path="trips/:id" element={<TripDetailsPage />} />

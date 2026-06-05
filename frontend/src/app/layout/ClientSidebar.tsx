@@ -9,6 +9,7 @@ import {
   HiOutlineBars3,
   HiOutlineXMark,
   HiOutlineArrowRightOnRectangle,
+    HiOutlineTicket,
 } from 'react-icons/hi2'
 import type { IconBaseProps } from 'react-icons'
 import { cn } from '@/shared/lib/cn'
@@ -27,6 +28,7 @@ const NAV_ITEMS: readonly NavItem[] = [
   { to: '/dashboard', icon: HiOutlineHome, label: 'Panel główny' },
   { to: '/documents', icon: HiOutlineDocumentText, label: 'Dokumenty' },
   { to: '/trips', icon: HiOutlinePaperAirplane, label: 'Karta podróży' },
+    { to: '/my-trips', icon: HiOutlineTicket, label: 'Moje Podróże' },
   { to: '/destinations', icon: HiOutlineMap, label: 'Destynacje' },
   { to: '/weather', icon: HiOutlineCloud, label: 'Pogoda' },
 ] as const
