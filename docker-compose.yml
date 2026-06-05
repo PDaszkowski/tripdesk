@@ -24,20 +24,24 @@ services:
     volumes:
       - ollama_data:/root/.ollama
     restart: unless-stopped
-    # POPRAWKA: Używamy wbudowanej komendy 'ollama list', która nie wymaga curla
     healthcheck:
-      test: ["CMD-SHELL", "ollama list"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
+      test: ["CMD-SHELL", "ollama list || exit 1"]
+      interval: 15s
+      timeout: 10s
+      retries: 10
+      start_period: 30s
 
   ollama-pull-model:
     image: ollama/ollama:latest
     depends_on:
       ollama:
         condition: service_healthy
+    environment:
+      - OLLAMA_HOST=http://ollama:11434
     entrypoint: /bin/sh
-    command: "-c 'ollama pull llama3.2'"
+    command: >
+      -c "ollama pull llama3.2 && echo 'Model pobrany pomyślnie'"
+    restart: on-failure
 
   redis:
     image: redis:7-alpine
@@ -67,19 +71,31 @@ services:
       - UNSPLASH_API_KEY=${UNSPLASH_ACCESS_KEY}
       - DUFFEL_API_TOKEN=${DUFFEL_TOKEN}
       - SPRING_AI_OLLAMA_BASE_URL=http://ollama:11434
+      - STRIPE_API_KEY=${STRIPE_API_KEY}
+      - STRIPE_WEBHOOK_SECRET=${STRIPE_WEBHOOK_SECRET}
     depends_on:
       db:
         condition: service_healthy
       redis:
         condition: service_healthy
       ollama:
-        condition: service_started
-    restart: unless-stopped
+        condition: service_healthy
+      ollama-pull-model:
+        condition: service_completed_successfully
+    restart: on-failure
 
   frontend:
     build: ./frontend
     ports:
       - "3000:80"
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+  stripe-cli:
+    image: stripe/stripe-cli:latest
+    container_name: stripe-cli
+    command: listen --api-key ${STRIPE_API_KEY} --forward-to backend:8080/api/webhook
     depends_on:
       - backend
     restart: unless-stopped

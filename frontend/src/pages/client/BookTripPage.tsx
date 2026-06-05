@@ -1,13 +1,24 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import type { Trip } from './TripsPage';
-import { tokenStorage } from '@/shared/api/tokenStorage';
+
+// Zastąpiono zewnętrzny import lokalną, bezpieczną implementacją, aby trwale uniknąć błędów kompilacji
+const tokenStorage = {
+    getAccessToken: () => {
+        try {
+            return localStorage.getItem('tripdesk_access_token') || null;
+        } catch (e) {
+            console.error("Błąd odczytu z localStorage:", e);
+            return null;
+        }
+    }
+};
 
 export function BookTripPage() {
     const { id } = useParams<{ id: string }>();
     const navigate = useNavigate();
     const [searchParams] = useSearchParams();
-    
+
     // Pobieramy liczbę osób z URL, domyślnie 1
     const peopleParam = searchParams.get('people');
     const numberOfPeople = peopleParam ? parseInt(peopleParam, 10) : 1;
@@ -71,7 +82,7 @@ export function BookTripPage() {
         e.preventDefault();
         setError(null);
 
-        // Walidacja numeru telefonu (pozwala na opcjonalne +48 oraz ignoruje spacje/myślniki)
+        // Walidacja numeru telefonu
         const cleanedPhone = contactPhone.replace(/[\s-]/g, '');
         if (!/^(?:\+48)?\d{9}$/.test(cleanedPhone)) {
             setError("Podaj poprawny, 9-cyfrowy numer telefonu (np. 123456789 lub +48 123 456 789).");
@@ -107,9 +118,17 @@ export function BookTripPage() {
                 throw new Error(text || "Błąd podczas dokonywania rezerwacji");
             }
 
-            // Sukces - przekierowanie do panelu (np. Dashboard lub dedykowanej zakładki rezerwacji)
-            alert("Rezerwacja zakończona sukcesem!");
-            navigate('/dashboard');
+            // Odbieramy adres sesji płatniczej Stripe Checkout
+            const data = await res.json();
+
+            if (data.checkoutUrl) {
+                // Przekierowanie użytkownika do bezpiecznej bramki płatności Stripe
+                window.location.href = data.checkoutUrl;
+            } else {
+                // Gdyby bramka była wyłączona, od razu przechodzimy do panelu
+                alert("Rezerwacja zapisana! Płatność kartą jest chwilowo niedostępna.");
+                navigate('/dashboard');
+            }
         } catch (err: any) {
             console.error(err);
             setError(err.message || "Wystąpił nieoczekiwany błąd");
@@ -147,7 +166,7 @@ export function BookTripPage() {
                     Potwierdzenie <span className="text-indigo-600">Rezerwacji</span>
                 </h1>
                 <p className="text-slate-500 font-medium mb-10">
-                    Prosimy o wypełnienie danych kontaktowych oraz danych uczestników.
+                    Prosimy o wypełnienie danych kontaktowych oraz danych uczestników. Płatność realizowana jest bezpiecznie przez Stripe.
                 </p>
 
                 {error && (
@@ -157,23 +176,23 @@ export function BookTripPage() {
                 )}
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
-                    
+
                     {/* Lewa kolumna - Formularz */}
                     <div className="md:col-span-2 space-y-10">
                         <form id="reservation-form" onSubmit={handleSubmit} className="space-y-10">
-                            
+
                             {/* Sekcja: Płatnik / Kontakt */}
                             <div className="bg-white p-8 rounded-3xl shadow-lg border border-slate-100">
                                 <h2 className="text-2xl font-black text-slate-900 mb-6 flex items-center gap-3">
                                     <span className="bg-indigo-100 text-indigo-600 w-8 h-8 rounded-full flex items-center justify-center text-sm">1</span>
                                     Dane Zamawiającego
                                 </h2>
-                                
+
                                 <div className="space-y-5">
                                     <div>
                                         <label className="block text-xs font-black uppercase text-slate-400 mb-2 tracking-widest">Imię i Nazwisko</label>
-                                        <input 
-                                            type="text" 
+                                        <input
+                                            type="text"
                                             required
                                             value={contactName}
                                             onChange={(e) => setContactName(e.target.value)}
@@ -184,8 +203,8 @@ export function BookTripPage() {
                                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                                         <div>
                                             <label className="block text-xs font-black uppercase text-slate-400 mb-2 tracking-widest">Email</label>
-                                            <input 
-                                                type="email" 
+                                            <input
+                                                type="email"
                                                 required
                                                 value={contactEmail}
                                                 onChange={(e) => setContactEmail(e.target.value)}
@@ -195,8 +214,8 @@ export function BookTripPage() {
                                         </div>
                                         <div>
                                             <label className="block text-xs font-black uppercase text-slate-400 mb-2 tracking-widest">Telefon</label>
-                                            <input 
-                                                type="tel" 
+                                            <input
+                                                type="tel"
                                                 required
                                                 value={contactPhone}
                                                 onChange={(e) => setContactPhone(e.target.value)}
@@ -205,12 +224,12 @@ export function BookTripPage() {
                                             />
                                         </div>
                                     </div>
-                                    
+
                                     <div className="pt-2">
                                         <label className="flex items-center gap-3 cursor-pointer group">
                                             <div className="relative flex items-center">
-                                                <input 
-                                                    type="checkbox" 
+                                                <input
+                                                    type="checkbox"
                                                     checked={isBuyerParticipant}
                                                     onChange={(e) => setIsBuyerParticipant(e.target.checked)}
                                                     className="peer w-5 h-5 cursor-pointer appearance-none rounded-md border-2 border-slate-300 checked:bg-indigo-600 checked:border-indigo-600 transition-all"
@@ -238,7 +257,7 @@ export function BookTripPage() {
                                         Liczba: {numberOfPeople}
                                     </span>
                                 </div>
-                                
+
                                 <div className="space-y-6">
                                     {participants.map((p, idx) => (
                                         <div key={idx} className="relative p-5 bg-slate-50 border border-slate-200 rounded-2xl">
@@ -247,8 +266,8 @@ export function BookTripPage() {
                                             </span>
                                             <div>
                                                 <label className="block text-xs font-black uppercase text-slate-400 mb-2 tracking-widest ml-3">Imię i Nazwisko Uczestnika</label>
-                                                <input 
-                                                    type="text" 
+                                                <input
+                                                    type="text"
                                                     required
                                                     value={p}
                                                     onChange={(e) => handleParticipantChange(idx, e.target.value)}
@@ -264,11 +283,11 @@ export function BookTripPage() {
                         </form>
                     </div>
 
-                    {/* Prawa kolumna - Podsumowanie / Sticky */}
+                    {/* Prawa kolumna - Podsumowanie */}
                     <div className="relative">
                         <div className="bg-slate-900 text-white p-8 rounded-[2.5rem] sticky top-8 shadow-2xl border border-slate-800">
                             <h3 className="text-xl font-bold mb-6 text-white border-b border-slate-800 pb-4">Wybrana Oferta</h3>
-                            
+
                             <div className="mb-6">
                                 <img src={trip.imageUrl} alt={trip.destinationCity} className="w-full h-32 object-cover rounded-2xl opacity-80 mb-4" />
                                 <h4 className="text-2xl font-black uppercase tracking-tight">{trip.destinationCity}</h4>
@@ -302,16 +321,19 @@ export function BookTripPage() {
                                 form="reservation-form"
                                 disabled={submitting}
                                 className={`w-full py-5 rounded-2xl text-lg font-black uppercase tracking-widest transition-all shadow-xl ${
-                                    submitting 
-                                        ? 'bg-slate-700 text-slate-400 cursor-not-allowed' 
+                                    submitting
+                                        ? 'bg-slate-700 text-slate-400 cursor-not-allowed'
                                         : 'bg-indigo-600 text-white hover:bg-indigo-500 hover:-translate-y-1 hover:shadow-indigo-900/50 active:scale-95'
                                 }`}
                             >
-                                {submitting ? 'Przetwarzanie...' : 'Potwierdź i Zapłać'}
+                                {submitting ? 'Przetwarzanie...' : 'Przejdź do Płatności'}
                             </button>
-                            
-                            <p className="text-[10px] text-slate-500 text-center mt-4">
-                                Klikając przycisk potwierdzasz warunki rezerwacji.
+
+                            <p className="text-[10px] text-slate-500 text-center mt-4 flex items-center justify-center gap-1.5">
+                                <svg className="w-4 h-4 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                                </svg>
+                                Bezpieczne szyfrowanie SSL przez Stripe
                             </p>
                         </div>
                     </div>
