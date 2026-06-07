@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import type { Trip } from './TripsPage';
+import { WeatherWidget } from '@/features/weather/WeatherWidget_OpenMeteo';
 
 export function TripDetailsPage() {
     const { id } = useParams<{ id: string }>();
@@ -140,8 +141,15 @@ export function TripDetailsPage() {
                     </section>
                 </div>
 
-                {/* Kolumna Prawa: Kalkulator Rezerwacji */}
-                <div className="relative">
+                {/* Kolumna Prawa: Pogoda + Kalkulator Rezerwacji */}
+                <div className="relative space-y-6">
+                    {/* Widget pogody — pobiera daty wylotu/powrotu z oferty */}
+                    <WeatherWidget
+                        city={trip.destinationCity}
+                        departureTime={trip.departureTime}
+                        returnTime={trip.returnDepartureTime}
+                    />
+
                     <div className="bg-slate-900 text-white p-10 rounded-[3rem] sticky top-8 shadow-2xl border border-slate-800">
                         <div className="flex justify-between items-start mb-8">
                             <h3 className="text-2xl font-bold text-white">Podsumowanie</h3>
