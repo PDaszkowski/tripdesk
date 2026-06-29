@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useTrip } from '@/features/trips/api/getTrip'
-import { WeatherWidget } from '@/features/weather/WeatherWidget_OpenMeteo'
+import { WeatherWidget } from '@/features/weather/components/WeatherWidget'
 import { Button } from '@/shared/ui/Button'
 import { Spinner } from '@/shared/ui/Spinner'
 
