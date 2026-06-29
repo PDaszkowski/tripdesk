@@ -7,31 +7,9 @@ import {
 } from 'react-icons/hi2'
 import { useAuth } from '@/features/auth/context/useAuth'
 import { useTrips } from '@/features/trips/api/getTrips'
+import { FEATURED_DESTINATIONS } from '@/features/trips/constants'
 import { Button } from '@/shared/ui/Button'
 import { cn } from '@/shared/lib/cn'
-
-const DESTINATIONS = [
-  {
-    name: 'Hiszpania',
-    code: 'ES',
-    img: 'https://images.unsplash.com/photo-1543783207-ec64e4d95325?q=80&w=1170&auto=format&fit=crop',
-  },
-  {
-    name: 'Turcja',
-    code: 'TR',
-    img: 'https://images.unsplash.com/photo-1524231757912-21f4fe3a7200',
-  },
-  {
-    name: 'Egipt',
-    code: 'EG',
-    img: 'https://images.unsplash.com/photo-1503177119275-0aa32b3a9368',
-  },
-  {
-    name: 'Grecja',
-    code: 'GR',
-    img: 'https://images.unsplash.com/photo-1533105079780-92b9be482077',
-  },
-] as const
 
 export function DashboardPage() {
   const { user } = useAuth()
@@ -86,7 +64,7 @@ export function DashboardPage() {
       <section className="mb-16">
         <h2 className="mb-6 text-2xl font-bold text-slate-900">Odkrywaj świat</h2>
         <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
-          {DESTINATIONS.map((dest) => (
+          {FEATURED_DESTINATIONS.map((dest) => (
             <button
               key={dest.code}
               type="button"

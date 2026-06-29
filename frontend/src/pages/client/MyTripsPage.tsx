@@ -1,21 +1,12 @@
 import { useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { useMyReservations } from '@/features/reservations/api/getMyReservations'
+import {
+  RESERVATION_STATUS,
+  RESERVATION_STATUS_FALLBACK,
+} from '@/features/reservations/constants'
 import { Button } from '@/shared/ui/Button'
 import { Spinner } from '@/shared/ui/Spinner'
-
-const STATUS_CONFIG: Record<string, { label: string; color: string }> = {
-  PAID: { label: 'Opłacona', color: 'bg-teal-100 text-teal-700 border-teal-200' },
-  PENDING: {
-    label: 'Oczekująca',
-    color: 'bg-amber-100 text-amber-700 border-amber-200',
-  },
-  NEW: { label: 'Nowa', color: 'bg-sky-100 text-sky-600 border-sky-200' },
-  CANCELLED: {
-    label: 'Anulowana',
-    color: 'bg-red-100 text-red-600 border-red-200',
-  },
-}
 
 function formatDate(dateStr: string): string {
   return new Date(dateStr).toLocaleDateString('pl-PL', {
@@ -99,10 +90,8 @@ export function MyTripsPage() {
 
       <div className="space-y-6">
         {reservations.map((r) => {
-          const status = STATUS_CONFIG[r.status] ?? {
-            label: r.status,
-            color: 'bg-slate-100 text-slate-500 border-slate-200',
-          }
+          const status =
+            RESERVATION_STATUS[r.status] ?? RESERVATION_STATUS_FALLBACK
           const isExpanded = expandedId === r.id
 
           return (

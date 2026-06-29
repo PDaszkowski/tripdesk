@@ -1,5 +1,6 @@
 import { useMutation } from '@tanstack/react-query'
 import { httpClient } from '@/shared/api/httpClient'
+import { endpoints } from '@/shared/api/endpoints'
 import type {
   CreateReservationPayload,
   CreateReservationResponse,
@@ -9,7 +10,7 @@ export async function createReservation(
   payload: CreateReservationPayload,
 ): Promise<CreateReservationResponse> {
   return httpClient
-    .post('api/reservations', { json: payload })
+    .post(endpoints.reservations.create, { json: payload })
     .json<CreateReservationResponse>()
 }
 

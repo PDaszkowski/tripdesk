@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom'
 import { Button } from '@/shared/ui/Button'
+import { TRIP_FALLBACK_IMAGE } from '../constants'
 import type { Trip } from '../types'
 
 interface TripCardProps {
@@ -15,9 +16,6 @@ function formatDateTime(dateStr: string): string {
   })
 }
 
-const FALLBACK_IMAGE =
-  'https://images.unsplash.com/photo-1500673922987-e212871fec22'
-
 export function TripCard({ trip }: TripCardProps) {
   const navigate = useNavigate()
 
@@ -25,7 +23,7 @@ export function TripCard({ trip }: TripCardProps) {
     <article className="group flex w-full flex-col overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-md transition-all hover:shadow-xl">
       <div className="relative h-80 w-full overflow-hidden">
         <img
-          src={trip.imageUrl || FALLBACK_IMAGE}
+          src={trip.imageUrl || TRIP_FALLBACK_IMAGE}
           alt={trip.destinationCity}
           className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
         />

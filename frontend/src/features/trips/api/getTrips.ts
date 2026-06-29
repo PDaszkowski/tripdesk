@@ -1,10 +1,11 @@
 import { useQuery } from '@tanstack/react-query'
 import { httpClient } from '@/shared/api/httpClient'
+import { endpoints } from '@/shared/api/endpoints'
 import type { Trip } from '../types'
 
 export async function getTrips(country?: string): Promise<Trip[]> {
   return httpClient
-    .get('api/trips', country ? { searchParams: { country } } : undefined)
+    .get(endpoints.trips.list, country ? { searchParams: { country } } : undefined)
     .json<Trip[]>()
 }
 

@@ -1,8 +1,7 @@
 import ky, { HTTPError } from 'ky'
 import { tokenStorage } from './tokenStorage'
-
-const baseUrl =
-  import.meta.env.VITE_API_BASE_URL?.replace(/\/$/, '') ?? 'http://localhost:8080'
+import { endpoints } from './endpoints'
+import { env } from '@/shared/config/env'
 
 let refreshPromise: Promise<string> | null = null
 
@@ -13,8 +12,8 @@ async function refreshAccessToken(): Promise<string> {
   }
 
   const data = await ky
-    .post('api/auth/refresh', {
-      prefix: baseUrl,
+    .post(endpoints.auth.refresh, {
+      prefix: env.apiBaseUrl,
       json: { refreshToken },
     })
     .json<{ accessToken: string; refreshToken: string }>()
@@ -36,7 +35,7 @@ function handleAuthFailure(): void {
 }
 
 export const httpClient = ky.extend({
-  prefix: baseUrl,
+  prefix: env.apiBaseUrl,
   retry: {
     limit: 1,
     methods: ['get', 'post', 'put', 'patch', 'delete'],

@@ -1,5 +1,6 @@
 import { useMutation } from '@tanstack/react-query'
 import { httpClient } from '@/shared/api/httpClient'
+import { endpoints } from '@/shared/api/endpoints'
 import { tokenStorage } from '@/shared/api/tokenStorage'
 import { useAuth } from '../context/useAuth'
 import type { AuthResponse, LoginCredentials } from '../types'
@@ -8,7 +9,7 @@ export async function loginUser(
   credentials: LoginCredentials,
 ): Promise<AuthResponse> {
   return httpClient
-    .post('api/auth/login', { json: credentials })
+    .post(endpoints.auth.login, { json: credentials })
     .json<AuthResponse>()
 }
 
