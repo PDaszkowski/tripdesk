@@ -1,141 +1,161 @@
-import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom'
 import {
-    HiOutlineDocumentText,
-    HiOutlinePaperAirplane,
-    HiOutlineCloud,
-    HiOutlineMapPin, // Nowa ikona
-} from 'react-icons/hi2';
-import { useAuth } from '@/features/auth/context/useAuth';
-import { Button } from '@/shared/ui/Button';
-import { cn } from '@/shared/lib/cn';
-import type { Trip } from './TripsPage'; // Importujemy interfejs
+  HiOutlineDocumentText,
+  HiOutlinePaperAirplane,
+  HiOutlineCloud,
+  HiOutlineMapPin,
+} from 'react-icons/hi2'
+import { useAuth } from '@/features/auth/context/useAuth'
+import { useTrips } from '@/features/trips/api/getTrips'
+import { Button } from '@/shared/ui/Button'
+import { cn } from '@/shared/lib/cn'
+
+const DESTINATIONS = [
+  {
+    name: 'Hiszpania',
+    code: 'ES',
+    img: 'https://images.unsplash.com/photo-1543783207-ec64e4d95325?q=80&w=1170&auto=format&fit=crop',
+  },
+  {
+    name: 'Turcja',
+    code: 'TR',
+    img: 'https://images.unsplash.com/photo-1524231757912-21f4fe3a7200',
+  },
+  {
+    name: 'Egipt',
+    code: 'EG',
+    img: 'https://images.unsplash.com/photo-1503177119275-0aa32b3a9368',
+  },
+  {
+    name: 'Grecja',
+    code: 'GR',
+    img: 'https://images.unsplash.com/photo-1533105079780-92b9be482077',
+  },
+] as const
 
 export function DashboardPage() {
-    const { user } = useAuth();
-    const navigate = useNavigate();
-    const [featuredTrips, setFeaturedTrips] = useState<Trip[]>([]);
+  const { user } = useAuth()
+  const navigate = useNavigate()
+  const { data: trips } = useTrips()
 
-    useEffect(() => {
-        const fetchTrips = async () => {
-            try {
-                const token = localStorage.getItem('token');
-                const headers: HeadersInit = {};
-                if (token && token !== 'null') headers['Authorization'] = `Bearer ${token}`;
+  const featuredTrips = trips?.slice(0, 3) ?? []
 
-                const res = await fetch('http://localhost:8080/api/trips', { headers });
-                const data = await res.json();
-                // Bierzemy tylko 3 pierwsze
-                setFeaturedTrips(Array.isArray(data) ? data.slice(0, 3) : []);
-            } catch (err) {
-                console.error("Błąd ładowania polecanych:", err);
-            }
-        };
-        fetchTrips();
-    }, []);
+  return (
+    <div className="mx-auto w-full max-w-6xl pb-20">
+      <header className="mb-10">
+        <h1 className="text-4xl font-bold tracking-tight text-slate-900">
+          Witaj,{' '}
+          <span className="text-sky-500">{user?.firstName ?? 'Podróżniku'}</span>
+          !
+        </h1>
+        <p className="mt-2 text-slate-500">
+          Zacznij swoją kolejną przygodę dzisiaj.
+        </p>
+      </header>
+      
+      <div className="mb-16 grid grid-cols-1 gap-6 md:grid-cols-3">
+        <QuickCard
+          icon={<HiOutlineDocumentText size={24} />}
+          iconColor="sky"
+          title="Dokumenty"
+          subtitle="Twoje bilety i umowy"
+          to="/documents"
+          buttonLabel="Zarządzaj"
+          buttonVariant="primary"
+        />
+        <QuickCard
+          icon={<HiOutlinePaperAirplane size={24} />}
+          iconColor="teal"
+          title="Moje podróże"
+          subtitle="Twoje rezerwacje"
+          to="/my-trips"
+          buttonLabel="Zobacz wszystkie"
+          buttonVariant="secondary"
+        />
+        <QuickCard
+          icon={<HiOutlineCloud size={24} />}
+          iconColor="sky"
+          title="Pogoda"
+          subtitle="Sprawdź cel podróży"
+          to="/weather"
+          buttonLabel="Sprawdź"
+          buttonVariant="outline"
+        />
+      </div>
 
-    const destinations = [
-        { name: 'Hiszpania', code: 'ES', img: 'https://images.unsplash.com/photo-1543783207-ec64e4d95325?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D' },
-        { name: 'Turcja', code: 'TR', img: 'https://images.unsplash.com/photo-1524231757912-21f4fe3a7200' },
-        { name: 'Egipt', code: 'EG', img: 'https://images.unsplash.com/photo-1503177119275-0aa32b3a9368' },
-        { name: 'Grecja', code: 'GR', img: 'https://images.unsplash.com/photo-1533105079780-92b9be482077' },
-    ];
-
-    return (
-        <div className="mx-auto w-full max-w-6xl pb-20">
-            <header className="mb-10">
-                <h1 className="text-4xl font-black tracking-tight text-slate-900">
-                    Witaj, <span className="text-indigo-600">{user?.firstName ?? 'Podróżniku'}</span>!
-                </h1>
-                <p className="mt-2 text-slate-500">Zacznij swoją kolejną przygodę dzisiaj.</p>
-            </header>
-
-            {/* Szybkie Akcje */}
-            <div className="grid grid-cols-1 gap-6 md:grid-cols-3 mb-16">
-                <QuickCard
-                    icon={<HiOutlineDocumentText size={24} />}
-                    iconColor="sky"
-                    title="Dokumenty"
-                    subtitle="Twoje bilety i umowy"
-                    to="/documents"
-                    buttonLabel="Zarządzaj"
-                    buttonVariant="primary"
-                />
-                <QuickCard
-                    icon={<HiOutlinePaperAirplane size={24} />}
-                    iconColor="teal"
-                    title="Moje Podróże"
-                    subtitle="3 zaplanowane wyjazdy"
-                    to="/trips"
-                    buttonLabel="Zobacz wszystkie"
-                    buttonVariant="secondary"
-                />
-                <QuickCard
-                    icon={<HiOutlineCloud size={24} />}
-                    iconColor="sky"
-                    title="Pogoda"
-                    subtitle="Sprawdź cel podróży"
-                    to="/weather"
-                    buttonLabel="Sprawdź"
-                    buttonVariant="outline"
-                />
-            </div>
-
-            {/* Sekcja: Popularne Kierunki (Destynacje) */}
-            <section className="mb-16">
-                <h2 className="text-2xl font-bold text-slate-900 mb-6">Odkrywaj Świat</h2>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    {destinations.map((dest) => (
-                        <button
-                            key={dest.code}
-                            onClick={() => navigate(`/trips?country=${dest.name}`)}
-                            className="group relative h-40 rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all"
-                        >
-                            <img src={dest.img} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
-                            <div className="absolute inset-0 bg-black/30 group-hover:bg-black/10 transition-colors" />
-                            <span className="absolute inset-0 flex items-center justify-center text-white font-black uppercase tracking-widest text-lg">
+      <section className="mb-16">
+        <h2 className="mb-6 text-2xl font-bold text-slate-900">Odkrywaj świat</h2>
+        <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+          {DESTINATIONS.map((dest) => (
+            <button
+              key={dest.code}
+              type="button"
+              onClick={() => navigate(`/trips?country=${dest.name}`)}
+              className="group relative h-40 overflow-hidden rounded-2xl shadow-sm transition-all hover:shadow-xl"
+            >
+              <img
+                src={dest.img}
+                alt={dest.name}
+                className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
+              />
+              <div className="absolute inset-0 bg-black/30 transition-colors group-hover:bg-black/10" />
+              <span className="absolute inset-0 flex items-center justify-center text-lg font-bold tracking-widest text-white uppercase">
                 {dest.name}
               </span>
-                        </button>
-                    ))}
-                </div>
-            </section>
-
-            {/* Sekcja: Polecane Oferty (Inny wygląd niż na liście głównej) */}
-            <section>
-                <div className="flex justify-between items-end mb-6">
-                    <h2 className="text-2xl font-bold text-slate-900">Gorące Oferty</h2>
-                    <Button variant="ghost" onClick={() => navigate('/trips')}>Zobacz więcej →</Button>
-                </div>
-
-                <div className="grid grid-cols-1 gap-4">
-                    {featuredTrips.map((trip) => (
-                        <div
-                            key={trip.id}
-                            onClick={() => navigate(`/trips/${trip.id}`)}
-                            className="flex items-center gap-6 p-4 bg-white rounded-3xl border border-slate-100 shadow-sm hover:border-indigo-200 hover:shadow-md transition-all cursor-pointer group"
-                        >
-                            <div className="w-24 h-24 rounded-2xl overflow-hidden flex-shrink-0">
-                                <img src={trip.imageUrl} className="w-full h-full object-cover" />
-                            </div>
-                            <div className="flex-1">
-                                <div className="flex items-center gap-2 text-indigo-600 mb-1">
-                                    <HiOutlineMapPin size={14} />
-                                    <span className="text-[10px] font-black uppercase tracking-widest">{trip.destinationCity}</span>
-                                </div>
-                                <h3 className="font-bold text-slate-900 group-hover:text-indigo-600 transition-colors">{trip.hotelName}</h3>
-                                <p className="text-xs text-slate-500 line-clamp-1">{trip.description}</p>
-                            </div>
-                            <div className="text-right pr-4">
-                                <p className="text-xs text-slate-400 font-medium">od</p>
-                                <p className="text-xl font-black text-slate-900">{trip.price} <span className="text-[10px]">PLN</span></p>
-                            </div>
-                        </div>
-                    ))}
-                </div>
-            </section>
+            </button>
+          ))}
         </div>
-    );
+      </section>
+
+      <section>
+        <div className="mb-6 flex items-end justify-between">
+          <h2 className="text-2xl font-bold text-slate-900">Gorące oferty</h2>
+          <Button variant="ghost" onClick={() => navigate('/trips')}>
+            Zobacz więcej →
+          </Button>
+        </div>
+
+        <div className="grid grid-cols-1 gap-4">
+          {featuredTrips.map((trip) => (
+            <button
+              key={trip.id}
+              type="button"
+              onClick={() => navigate(`/trips/${trip.id}`)}
+              className="group flex cursor-pointer items-center gap-6 rounded-3xl border border-slate-200 bg-white p-4 text-left shadow-sm transition-all hover:border-sky-500 hover:shadow-md"
+            >
+              <div className="h-24 w-24 shrink-0 overflow-hidden rounded-2xl">
+                <img
+                  src={trip.imageUrl}
+                  alt={trip.destinationCity}
+                  className="h-full w-full object-cover"
+                />
+              </div>
+              <div className="flex-1">
+                <div className="mb-1 flex items-center gap-2 text-sky-500">
+                  <HiOutlineMapPin size={14} />
+                  <span className="text-[10px] font-bold tracking-widest uppercase">
+                    {trip.destinationCity}
+                  </span>
+                </div>
+                <h3 className="font-semibold text-slate-900 transition-colors group-hover:text-sky-500">
+                  {trip.hotelName}
+                </h3>
+                <p className="line-clamp-1 text-xs text-slate-500">
+                  {trip.description}
+                </p>
+              </div>
+              <div className="pr-4 text-right">
+                <p className="text-xs font-medium text-slate-500">od</p>
+                <p className="text-xl font-bold text-slate-900">
+                  {trip.price} <span className="text-[10px]">PLN</span>
+                </p>
+              </div>
+            </button>
+          ))}
+        </div>
+      </section>
+    </div>
+  )
 }
 
 interface QuickCardProps {
@@ -177,11 +197,7 @@ function QuickCard({
           <p className="text-sm text-slate-500">{subtitle}</p>
         </div>
       </div>
-      <Button
-        variant={buttonVariant}
-        fullWidth
-        onClick={() => navigate(to)}
-      >
+      <Button variant={buttonVariant} fullWidth onClick={() => navigate(to)}>
         {buttonLabel}
       </Button>
     </div>
