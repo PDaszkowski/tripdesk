@@ -1,12 +1,23 @@
-export type TripStatus = 'upcoming' | 'ongoing' | 'completed'
-
 export interface Trip {
-  id: string
-  destination: string
-  country: string
-  startDate: string // ISO format YYYY-MM-DD
-  endDate: string
+  id: number
+  originCode: string
+  destinationCode: string
+  destinationCity: string
+  departureTime: string
+  arrivalTime: string
+  outboundDuration: string
+  price: number
+  imageUrl: string
+  description: string
   hotelName: string
-  flightNumber: string
-  status: TripStatus
+  attractions: string
+  maxPeople: number
+  returnDepartureTime: string
+  durationDays: number
+  boardBasis: string
+  hasParking: boolean
+  flightPrice: number
+  hotelPrice: number
+  attractionImageUrls: string[]
+  stopOverInfo?: string
 }
