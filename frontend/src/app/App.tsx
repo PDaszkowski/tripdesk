@@ -1,23 +1,54 @@
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import { AuthProvider } from '../features/auth/context/AuthProvider'
 import { AppShell } from './layout/AppShell'
-import { HomePage } from '../features/auth/pages/HomePage'
+import { ClientLayout } from './layout/ClientLayout'
+import { HomePage } from '../pages/HomePage'
+import { DashboardPage } from '../pages/client/DashboardPage'
+import { DocumentsPage } from '../pages/client/DocumentsPage'
+import { TripsPage } from '../pages/client/TripsPage'
+import { DestinationsPage } from '../pages/client/DestinationsPage'
+import { WeatherPage } from '../pages/client/WeatherPage'
 import { LoginPage } from '../features/auth/pages/LoginPage'
 import { RegisterPage } from '../features/auth/pages/RegisterPage'
+import { QueryProvider } from './providers/QueryProvider'
+import { RequireAuth } from './router/RequireAuth'
+import { RequireRole } from './router/RequireRole'
+import { TripDetailsPage } from '../pages/client/TripDetailsPage'
+import { BookTripPage } from '../pages/client/BookTripPage'
+import { MyTripsPage } from '../pages/client/MyTripsPage';
 
 export default function App() {
   return (
     <BrowserRouter>
-      <AuthProvider>
-        <Routes>
-          <Route element={<AppShell />}>
-            <Route index element={<HomePage />} />
-            <Route path="login" element={<LoginPage />} />
-            <Route path="register" element={<RegisterPage />} />
+      <QueryProvider>
+        <AuthProvider>
+          <Routes>
+            {/* Public routes - top Navbar via AppShell */}
+            <Route element={<AppShell />}>
+              <Route index element={<HomePage />} />
+              <Route path="login" element={<LoginPage />} />
+              <Route path="register" element={<RegisterPage />} />
+            </Route>
+
+            {/* Client panel - sidebar via ClientLayout */}
+            <Route element={<RequireAuth />}>
+              <Route element={<RequireRole role="CLIENT" />}>
+                <Route element={<ClientLayout />}>
+                  <Route path="dashboard" element={<DashboardPage />} />
+                    <Route path="/my-trips" element={<MyTripsPage />} />
+                  <Route path="documents" element={<DocumentsPage />} />
+                  <Route path="trips" element={<TripsPage />} />
+                    <Route path="trips/:id" element={<TripDetailsPage />} />
+                    <Route path="book/:id" element={<BookTripPage />} />
+                  <Route path="destinations" element={<DestinationsPage />} />
+                  <Route path="weather" element={<WeatherPage />} />
+                </Route>
+              </Route>
+            </Route>
             <Route path="*" element={<Navigate to="/" replace />} />
-          </Route>
-        </Routes>
-      </AuthProvider>
+          </Routes>
+        </AuthProvider>
+      </QueryProvider>
     </BrowserRouter>
   )
 }

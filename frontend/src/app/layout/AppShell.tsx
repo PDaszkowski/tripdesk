@@ -1,33 +1,11 @@
-import { Link, Outlet } from 'react-router-dom'
-import { useAuth } from '../../features/auth/context/useAuth'
-import styles from './AppShell.module.css'
+import { Outlet } from 'react-router-dom'
+import { Navbar } from './Navbar'
 
 export function AppShell() {
-  const { user, logout } = useAuth()
-
   return (
-    <div className={styles.root}>
-      <header className={styles.header}>
-        <Link to="/" className={styles.logo}>
-          TripDesk
-        </Link>
-        <nav className={styles.nav}>
-          {user ? (
-            <>
-              <span className={styles.user}>{user.firstName} {user.lastName}</span>
-              <button type="button" onClick={logout}>
-                Wyloguj
-              </button>
-            </>
-          ) : (
-            <>
-              <Link to="/login">Logowanie</Link>
-              <Link to="/register">Rejestracja</Link>
-            </>
-          )}
-        </nav>
-      </header>
-      <main className={styles.main}>
+    <div className="flex min-h-screen flex-col">
+      <Navbar />
+      <main className="flex flex-1 flex-col px-5 pt-8 pb-12 sm:px-6 sm:pt-10 sm:pb-16">
         <Outlet />
       </main>
     </div>

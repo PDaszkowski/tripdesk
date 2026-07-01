@@ -12,4 +12,6 @@ public class TravelCardController {
     public ResponseEntity<String> testEndpoint() {
         return ResponseEntity.ok("Dostęp przyznany! Autoryzacja działa.");
     }
+
+
 }

@@ -4,6 +4,7 @@ import { cn } from '@/shared/lib/cn';
 type InputProps = Omit<InputHTMLAttributes<HTMLInputElement>, 'id'> & {
   label?: string;
   icon?: ReactNode;
+  rightSlot?: ReactNode;
   error?: string;
   id?: string;
   ref?: Ref<HTMLInputElement>;
@@ -12,6 +13,7 @@ type InputProps = Omit<InputHTMLAttributes<HTMLInputElement>, 'id'> & {
 export function Input({
   label,
   icon,
+  rightSlot,
   error,
   className,
   id,
@@ -47,7 +49,8 @@ export function Input({
             'placeholder:text-slate-500',
             'focus:ring-2',
             'disabled:cursor-not-allowed disabled:opacity-60',
-            icon ? 'pl-10 pr-3' : 'px-3',
+            icon ? 'pl-10' : 'pl-3',
+            rightSlot ? 'pr-10' : 'pr-3',
             error
               ? 'border-red-500 focus:border-red-500 focus:ring-red-500/20'
               : 'border-slate-200 focus:border-sky-500 focus:ring-sky-500/20',
@@ -55,6 +58,12 @@ export function Input({
           )}
           {...rest}
         />
+
+        {rightSlot && (
+          <span className="absolute inset-y-0 right-3 flex items-center text-slate-500">
+            {rightSlot}
+          </span>
+        )}
       </div>
 
       {error && (

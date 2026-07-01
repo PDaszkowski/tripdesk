@@ -16,6 +16,33 @@ services:
       timeout: 5s
       retries: 5
 
+  ollama:
+    image: ollama/ollama:latest
+    container_name: ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "ollama list || exit 1"]
+      interval: 15s
+      timeout: 10s
+      retries: 10
+      start_period: 30s
+
+  ollama-pull-model:
+    image: ollama/ollama:latest
+    depends_on:
+      ollama:
+        condition: service_healthy
+    environment:
+      - OLLAMA_HOST=http://ollama:11434
+    entrypoint: /bin/sh
+    command: >
+      -c "ollama pull llama3.2 && echo 'Model pobrany pomyślnie'"
+    restart: on-failure
+
   redis:
     image: redis:7-alpine
     ports:
@@ -32,24 +59,30 @@ services:
     ports:
       - "8080:8080"
     environment:
-      # baza danych
       - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/tripdesk_db
       - SPRING_DATASOURCE_USERNAME=myuser
       - SPRING_DATASOURCE_PASSWORD=mypassword
       - SPRING_JPA_HIBERNATE_DDL_AUTO=update
-      # redis
       - SPRING_DATA_REDIS_HOST=redis
       - SPRING_DATA_REDIS_PORT=6379
-      # jwt
       - JWT_SECRET=${JWT_SECRET}
       - JWT_EXPIRATION=86400000
       - JWT_REFRESH_EXPIRATION=604800000
+      - UNSPLASH_API_KEY=${UNSPLASH_ACCESS_KEY}
+      - DUFFEL_API_TOKEN=${DUFFEL_TOKEN}
+      - SPRING_AI_OLLAMA_BASE_URL=http://ollama:11434
+      - STRIPE_API_KEY=${STRIPE_API_KEY}
+      - STRIPE_WEBHOOK_SECRET=${STRIPE_WEBHOOK_SECRET}
     depends_on:
       db:
         condition: service_healthy
       redis:
         condition: service_healthy
-    restart: unless-stopped
+      ollama:
+        condition: service_healthy
+      ollama-pull-model:
+        condition: service_completed_successfully
+    restart: on-failure
 
   frontend:
     build: ./frontend
@@ -59,5 +92,14 @@ services:
       - backend
     restart: unless-stopped
 
+  stripe-cli:
+    image: stripe/stripe-cli:latest
+    container_name: stripe-cli
+    command: listen --api-key ${STRIPE_API_KEY} --forward-to backend:8080/api/webhook
+    depends_on:
+      - backend
+    restart: unless-stopped
+
 volumes:
   postgres_data:
+  ollama_data:
